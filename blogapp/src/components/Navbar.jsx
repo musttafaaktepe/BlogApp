@@ -6,14 +6,16 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import NavbarLogin from "./NavbarLogin";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
-  const [navbarInfo, setNavbarInfo] = useState(true);
+  const { loginInformation } = useSelector((state) => state.loginInfos);
+  const navigate = useNavigate();
 
   return (
     <>
-      {navbarInfo || (
+      {loginInformation || (
         <Box sx={{ flexGrow: 1 }}>
           <AppBar position="static">
             <Toolbar>
@@ -29,14 +31,18 @@ const Navbar = () => {
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 bloggapp
               </Typography>
-              <Button color="inherit">Login</Button>
-              <Button color="inherit">logout</Button>
+              <Button color="inherit" onClick={() => navigate("/login")}>
+                Login
+              </Button>
+              <Button color="inherit" onClick={() => navigate("/register")}>
+                register
+              </Button>
             </Toolbar>
           </AppBar>
         </Box>
       )}
 
-      {navbarInfo && <NavbarLogin />}
+      {loginInformation && <NavbarLogin />}
     </>
   );
 };
