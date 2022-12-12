@@ -2,19 +2,17 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialStates = {    
     name:"",
-    lastName:"",
     email:"",
     password:"",
     
 };
 
 const registerSlice = createSlice({
-    name:"register",
+    name:"registerInfo",
     initialState:initialStates,
     reducers:{
-        registerInformation:(state,action)=>{
-            state.name=action.payload.firstName;
-            state.lastName=action.payload.lastName;
+        registerInfos:(state,action)=>{
+            state.name=action.payload.name;
             state.email=action.payload.email;
             state.password=action.payload.password;            
         },
@@ -25,6 +23,6 @@ const registerSlice = createSlice({
     }
 })
 
-export const {registerInformation, afterRegister} = registerSlice.actions;
+export const {registerInfos, afterRegister} = registerSlice.actions;
 export default registerSlice.reducer
 
