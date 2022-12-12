@@ -1,8 +1,55 @@
-import React from "react";
+import React, { useState } from "react";
 import "./login.css";
 import GoogleIcon from "../../assers/GoogleIcon";
+import { useSelector, useDispatch } from "react-redux";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
+import { auth } from "../../auth/firebase";
+import { loginInfos } from "../../redux/features/loginInfoSlice";
+import { loginSuccess } from "../../redux/features/loginInfoSlice";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate
+
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  
+  const loginInforms = useSelector((state)=> state.loginInfos)
+  const {loginInformation, email, password, userInfo} = loginInforms
+
+  const handleLogin = async()=>{
+    const reg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email.match(reg)) {
+      setEmailError(false);
+    } else {
+      setEmailError(true);
+      alert("ınvalidEmail");
+    }
+    if (password.toString().length < 6) {
+      setPasswordError(true);
+      alert("min 6 ch");
+    } else {
+      setPasswordError(false);
+    }
+
+    if(!emailError && !passwordError){
+      try {
+        const {user} = await signInWithEmailAndPassword(auth, email, password)
+        const {email:emailAddress, dislayName, uid, metadata} = user;
+        dispatch(loginSuccess({...loginInforms, userInfo:{dislayName, uid, metadata}, email:emailAddress}))
+        navigate("/")
+        console.log(loginInforms);
+        console.log(user) 
+      } catch (error) {
+        console.log(error.message);
+        
+      }
+    }
+    
+  }
+
   return (
     <div>
       <section className="vh-100">

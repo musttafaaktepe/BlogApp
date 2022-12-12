@@ -5,8 +5,10 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, firebaseConfig } from "../../auth/firebase";
 import { updateProfile } from "firebase/auth";
 import { registerInfos } from "../../redux/features/registerSlice";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navigate = useNavigate();
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
@@ -32,27 +34,33 @@ const Register = () => {
     }
 
     if (password.toString() === repeatPass.toString()) {
-      setMatchPassword(false);
-    } else {
       setMatchPassword(true);
+    } else {
+      setMatchPassword(false);
       alert("please check your passwords again because thaks are different!");
     }
 
-    if (name.toString().lenght < 3) {
+    if (name.toString().length < 3) {
       alert("please name information min 3ch");
     }
 
+    if (!agreeTerms) {
+      alert("please agree all statement in terms of service");
+    }
+
     if (
+      agreeTerms &&
       !emailError &&
-      passwordError &&
-      !matchPassword &&
-      name.toString().lenght > 3
+      !passwordError &&
+      matchPassword &&
+      name.toString().length >= 3
     ) {
       try {
         await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(auth.currentUser, {
           displayName: name,
         });
+        navigate("/login");
         alert("Registration Successful!");
       } catch (error) {
         console.log(error.message);
