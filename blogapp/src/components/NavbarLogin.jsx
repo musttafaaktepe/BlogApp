@@ -15,6 +15,8 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
+import { useNavigate} from "react-router-dom";
+
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -57,6 +59,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function NavbarLogin() {
+  const navigate = useNavigate()
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -74,6 +77,12 @@ export default function NavbarLogin() {
   const handleMenuClose = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
+  };
+
+
+
+  const handleMyaccount = () => {
+    navigate("/userinfos")
   };
 
   const handleMobileMenuOpen = (event) => {
@@ -97,8 +106,8 @@ export default function NavbarLogin() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+      <MenuItem onClick={handleMyaccount}>My account</MenuItem>
+      <MenuItem >Logout</MenuItem>
     </Menu>
   );
 
