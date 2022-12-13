@@ -8,7 +8,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import NavbarLogin from "./NavbarLogin";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-
+import RateReviewIcon from "@mui/icons-material/RateReview";
 const Navbar = () => {
   const { loginInformation } = useSelector((state) => state.loginInfos);
   const navigate = useNavigate();
@@ -28,8 +28,15 @@ const Navbar = () => {
               >
                 <MenuIcon />
               </IconButton>
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                bloggapp
+              <RateReviewIcon />
+              <Typography
+                variant="h6"
+                component="div"
+                sx={{ flexGrow: 1, cursor:"pointer"  }  }
+          
+                onClick={() => navigate("/")}
+              >
+                blog
               </Typography>
               <Button color="inherit" onClick={() => navigate("/login")}>
                 Login

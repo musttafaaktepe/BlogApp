@@ -1,0 +1,23 @@
+.add-post-div {
+  position: relative;
+  overflow: hidden;
+  .new-post-text {
+    position: absolute;
+    right: 50px;
+  }
+
+  
+  .add-button {
+    &:hover {
+      font-size: 3.5rem !important;
+      transition: all 1s;
+    }
+
+    &:hover + span{
+        font-size:3.5rem !important;
+        transition: all 1s;
+    }
+
+  }
+}
+
