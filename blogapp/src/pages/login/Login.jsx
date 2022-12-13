@@ -8,16 +8,21 @@ import { auth } from "../../auth/firebase";
 import { loginInfos } from "../../redux/features/loginInfoSlice";
 import { loginSuccess } from "../../redux/features/loginInfoSlice";
 import { useNavigate } from "react-router-dom";
+import { GoogleAuthProvider } from "firebase/auth";
+import ForgotPassword from "./ForgotPassword";
 
 const Login = () => {
+
   const dispatch = useDispatch();
-  const navigate = useNavigate
+  const navigate = useNavigate()
 
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   
   const loginInforms = useSelector((state)=> state.loginInfos)
   const {loginInformation, email, password, userInfo} = loginInforms
+
+  const googleProvider = new GoogleAuthProvider();
 
   const handleLogin = async()=>{
     const reg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -37,18 +42,32 @@ const Login = () => {
     if(!emailError && !passwordError){
       try {
         const {user} = await signInWithEmailAndPassword(auth, email, password)
-        const {email:emailAddress, dislayName, uid, metadata} = user;
-        dispatch(loginSuccess({...loginInforms, userInfo:{dislayName, uid, metadata}, email:emailAddress}))
+        const {email:emailAddress, dislayName, uid, metadata: { creationTime, lastSignInTime }} = user;
+        dispatch(loginSuccess({...loginInforms, userInfo:{dislayName, uid, metadata: { creationTime, lastSignInTime }}, email:emailAddress}))
         navigate("/")
+        alert("Successfull login")
         console.log(loginInforms);
         console.log(user) 
       } catch (error) {
         console.log(error.message);
-        
+        alert("Login failed!")
       }
     }
     
   }
+
+  const signInWithGoogle = () => {
+    signInWithPopup(auth, googleProvider)
+      .then((result) => {
+        const { email: emailAddress, displayName, metadata: { creationTime, lastSignInTime }, uid, photoURL } = result.user
+        dispatch((loginSuccess({ ...loginInforms, userInfo: { displayName, metadata: { creationTime, lastSignInTime }, uid, photoURL }, email: emailAddress })))
+        navigate("/")
+        alert("Successfully logged in with Google!")
+        console.log(result)
+      })
+  }
+
+  console.log(loginInforms)
 
   return (
     <div>
@@ -67,7 +86,7 @@ const Login = () => {
                 
                 <div className="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
                   <p className="lead fw-normal mb-0 me-3">Sign in with</p>
-                  <GoogleIcon  color="currentColor" />
+                  <GoogleIcon style={{ width: "1.5rem", cursor: "pointer" }} onClick={signInWithGoogle} color="currentColor" />
                 
                   
                 </div>
@@ -81,6 +100,7 @@ const Login = () => {
                     id="form3Example3"
                     className="form-control form-control-lg"
                     placeholder="Enter a valid email address"
+                    onChange={(e) => dispatch(loginInfos({ ...loginInforms, email: e.target.value }))}
                   />
                   <label className="form-label" htmlFor="form3Example3">
                     Email address
@@ -93,6 +113,7 @@ const Login = () => {
                     id="form3Example4"
                     className="form-control form-control-lg"
                     placeholder="Enter password"
+                    onChange={(e) => dispatch(loginInfos({ ...loginInforms, password: e.target.value }))}
                   />
                   <label className="form-label" htmlFor="form3Example4">
                     Password
@@ -111,21 +132,23 @@ const Login = () => {
                       Remember me
                     </label>
                   </div>
-                  <a href="#!" className="text-body">
+                  <a href="#!" className="text-body" data-bs-toggle="modal" data-bs-target="#forgotPassword"  >
                     Forgot password?
                   </a>
+                  
                 </div>
                 <div className="text-center text-lg-start mt-4 pt-2">
                   <button
                     type="button"
                     className="btn btn-primary btn-lg"
                     style={{ paddingLeft: "2.5rem", paddingRight: "2.5rem" }}
+                    onClick={handleLogin}
                   >
                     Login
                   </button>
                   <p className="small fw-bold mt-2 pt-1 mb-0">
                     Don't have an account?{" "}
-                    <a href="#!" className="link-danger">
+                    <a href="#!" className="link-danger" onClick={() => navigate("/register")}  >
                       Register
                     </a>
                   </p>
@@ -136,6 +159,7 @@ const Login = () => {
         </div>
         
       </section>
+      <ForgotPassword />
     </div>
   );
 };
