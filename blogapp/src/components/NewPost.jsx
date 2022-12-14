@@ -32,6 +32,22 @@ const NewPost = () => {
 
   if (!titleError && !contentError) {
     console.log("posted", postInfos);
+    try {
+      const database = getDatabase(app);
+      const postsRef = push(ref(database, "/posts" ))
+      set(postsRef, postInfos)
+      setPostInfos({
+        postTitle: "",
+        postContent: "",
+        imageURL: "",
+      })
+      // alert("send this post")
+      
+    } catch (error) {
+      console.log(error.message)
+      alert("you can not send this post")
+      
+    }
   } else {
     console.log("not posted");
   }
