@@ -11,48 +11,46 @@ const NewPost = () => {
     imageURL: "",
   });
 
-  const [ titleError, setTitleError ] = useState(true)
-  const [ contentError, setContentError ] = useState(true)
+  const [titleError, setTitleError] = useState(true);
+  const [contentError, setContentError] = useState(true);
 
-  const sendPost = () => {
+  const updateErrors = () => {
     if (postInfos.postTitle.toString().length < 3) {
-      alert("min 3 ch");
       setTitleError(true);
     } else {
       setTitleError(false);
     }
 
     if (postInfos.postContent.toString().length < 10) {
-      alert("min 10 ch");
       setContentError(true);
     } else {
       setContentError(false);
     }
   };
 
-  if (!titleError && !contentError) {
-    console.log("posted", postInfos);
-    try {
+  const sendPost = () => {
+    if (postInfos.postTitle.toString().length < 3) {
+      alert("min 3 characters");
+    }
+
+    if (postInfos.postContent.toString().length < 10) {
+      alert("min 10 chars for content");
+    }
+    if (!titleError && !contentError) {
+      console.log("posted", postInfos);
       const database = getDatabase(app);
-      const postsRef = push(ref(database, "/posts" ))
-      set(postsRef, postInfos)
+      const refPost = push(ref(database, "/posts"));
+      set(refPost, postInfos);
       setPostInfos({
         postTitle: "",
         postContent: "",
         imageURL: "",
-      })
-      // alert("send this post")
-      
-    } catch (error) {
-      console.log(error.message)
-      alert("you can not send this post")
-      
+      });
+      alert("posted!");
+    } else {
+      console.log("not posted");
     }
-  } else {
-    console.log("not posted");
-  }
-
-  console.log(postInfos);
+  };
 
   return (
     <div className="modal" id="newpost" tabIndex={-1}>
@@ -81,6 +79,7 @@ const NewPost = () => {
                   type="text"
                   className="form-control"
                   id="exampleInputEmail1"
+                  value={postInfos.postTitle}
                   aria-describedby="emailHelp"
                   placeholder="Enter your task..."
                   onChange={(e) =>
@@ -92,8 +91,9 @@ const NewPost = () => {
               <div className="m-2">
                 <label for="exampleFormControlTextarea1">post:</label>
                 <textarea
-                  class="form-control"
+                  className="form-control"
                   id="exampleFormControlTextarea1"
+                  value={postInfos.postContent}
                   rows="3"
                   onChange={(e) =>
                     setPostInfos({ ...postInfos, postContent: e.target.value })
@@ -109,6 +109,7 @@ const NewPost = () => {
                   type="text"
                   className="form-control"
                   id="exampleInputEmail1"
+                  value={postInfos.imageURL}
                   aria-describedby="emailHelp"
                   placeholder="Enter your image url..."
                   onChange={(e) =>
@@ -117,8 +118,20 @@ const NewPost = () => {
                 />
               </div>
               <div className="d-flex flex-column align-items-center">
-              <label className="mt-2 mb-2" style={{fontSize:"1.1rem",fontWeight:"bold"}}>Image Preview </label>
-              <img src={postInfos.imageURL} class="img-thumbnail" onError={(e) => e.target.src = "https://jobsalert.pk/wp-content/themes/jobs/images/default-blog-thumb.png"}></img>
+                <label
+                  className="mt-2 mb-2"
+                  style={{ fontSize: "1.1rem", fontWeight: "bold" }}
+                >
+                  Image Preview{" "}
+                </label>
+                <img
+                  src={postInfos.imageURL}
+                  className="img-thumbnail"
+                  onError={(e) =>
+                    (e.target.src =
+                      "https://jobsalert.pk/wp-content/themes/jobs/images/default-blog-thumb.png")
+                  }
+                ></img>
               </div>
             </form>
           </div>
@@ -128,6 +141,7 @@ const NewPost = () => {
               type="button"
               className="btn btn-primary"
               data-bs-dismiss="modal"
+              onMouseOver={updateErrors}
               onClick={sendPost}
             >
               Send
