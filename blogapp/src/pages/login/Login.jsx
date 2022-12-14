@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import React, { useState } from "react";
 import "./login.css";
 import GoogleIcon from "../../assers/GoogleIcon";
