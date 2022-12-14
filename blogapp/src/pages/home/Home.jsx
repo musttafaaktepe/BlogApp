@@ -2,6 +2,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { useSelector } from "react-redux";
 import "./Home.scss";
 import NewPost from "../../components/NewPost";
+import Post from "../../components/Post";
 
 const Home = () => {
   const { loginInformation } = useSelector((state) => state.loginInfos);
@@ -29,6 +30,7 @@ const Home = () => {
         </div>
       )}
       <NewPost />
+      <Post/>
     </div>
   );
 };
