@@ -8,23 +8,23 @@ import { getPosts } from "../redux/features/postSlice"
 import { useEffect, useState } from "react"
 
 const Post = () => {
-    const dispatch =useDispatch()
-    
+    const dispatch =useDispatch();
+    const [postsArr, setPostsArr] = useState([])    
     const {posts} = useSelector((state)=> state.postsSlice)
     console.log(posts);
+    console.log(postsArr)
     useEffect(()=>{
         const database= getDatabase(app);
         const postsRef = ref(database, "/posts")
         onValue(postsRef, (snapshot)=>{
             const data = snapshot.val()
-            const postArray = []
+            const postsArray = []
 
             for(let id in data) {
-                postArray.push({id, ...data.id})
+                postsArray.push({id, ...data[id]})
             }
-            dispatch(getPosts({posts:postArray}))
-        })
-    })
+            dispatch(getPosts({posts:postsArray}))        })
+    },[])
   return (
     <div>
 post
