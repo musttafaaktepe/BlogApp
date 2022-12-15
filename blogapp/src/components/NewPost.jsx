@@ -11,6 +11,7 @@ const NewPost = () => {
   } = useSelector((state) => state.loginInfos);
 
   const [date, setDate] = useState("");
+  const [imgSrcError, setImgSrcError] = useState(false)
   const [postInfos, setPostInfos] = useState({
     postTitle: "",
     postContent: "",
@@ -37,6 +38,16 @@ const NewPost = () => {
     setDate(new Date().toString());
   };
 
+  const handleImgUrl = (e) => {
+    setPostInfos({...postInfos, imageURL:e.target.value})
+    setImgSrcError(false)
+  }
+  
+  const imgOnError = (e) => {
+    e.target.src = "https://jobsalert.pk/wp-content/themes/jobs/images/default-blog-thumb.png"
+    setImgSrcError(true)
+  }
+
   const sendPost = () => {
     if (postInfos.postTitle.toString().length < 3) {
       alert("min 3 characters");
@@ -51,7 +62,8 @@ const NewPost = () => {
       const refPost = push(ref(database, "/posts"));
       set(refPost, {
         ...postInfos,
-        date,
+        date:date,  
+        imageURL: imgSrcError ? "https://jobsalert.pk/wp-content/themes/jobs/images/default-blog-thumb.png" : postInfos.imageURL
       });
       setPostInfos({
         postTitle: "",
@@ -124,10 +136,8 @@ const NewPost = () => {
                   value={postInfos.imageURL}
                   aria-describedby="emailHelp"
                   placeholder="Enter your image url..."
-                  onChange={(e) =>
-                    setPostInfos({ ...postInfos, imageURL: e.target.value })
-                  }
-                />
+                  onChange={handleImgUrl}/>
+                
               </div>
               <div className="d-flex flex-column align-items-center">
                 <label
@@ -139,10 +149,7 @@ const NewPost = () => {
                 <img
                   src={postInfos.imageURL}
                   className="img-thumbnail"
-                  onError={(e) =>
-                    (e.target.src =
-                      "https://jobsalert.pk/wp-content/themes/jobs/images/default-blog-thumb.png")
-                  }
+                  onError={imgOnError}
                 ></img>
               </div>
             </form>

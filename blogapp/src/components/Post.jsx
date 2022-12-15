@@ -89,8 +89,9 @@ const Post = () => {
             <CardMedia
               component="img"
               height="194"
-              image="/static/images/cards/paella.jpg"
-              alt="Paella dish"
+              image={item.imageURL}
+              alt={item.postTitle}
+             
             />
             <CardContent>
               <Typography variant="body2" color="text.secondary">
