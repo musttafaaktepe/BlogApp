@@ -9,6 +9,8 @@ const NewPost = () => {
   const {
     userInfo: { displayName },
   } = useSelector((state) => state.loginInfos);
+
+  const [date, setDate] = useState("");
   const [postInfos, setPostInfos] = useState({
     postTitle: "",
     postContent: "",
@@ -31,6 +33,8 @@ const NewPost = () => {
     } else {
       setContentError(false);
     }
+
+    setDate(new Date().toString());
   };
 
   const sendPost = () => {
@@ -45,7 +49,10 @@ const NewPost = () => {
       console.log("posted", postInfos);
       const database = getDatabase(app);
       const refPost = push(ref(database, "/posts"));
-      set(refPost, postInfos);
+      set(refPost, {
+        ...postInfos,
+        date,
+      });
       setPostInfos({
         postTitle: "",
         postContent: "",

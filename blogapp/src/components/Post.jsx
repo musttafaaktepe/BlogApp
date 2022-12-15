@@ -25,9 +25,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const Post = () => {
-  
   const [expanded, setExpanded] = React.useState(false);
- 
 
   const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -64,67 +62,67 @@ const Post = () => {
     });
   }, []);
   return (
-    <div className="d-flex justify-content-center flex-wrap m-2 mt-5" style={{gap:"1.5rem"}} >
-      
-     {posts?.map((item) => {
-                return (
-                    <Card sx={{ maxWidth: 345 }}>
-        <CardHeader
-          avatar={
-            <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            
-              
-            </Avatar>
-          }
-          action={
-            <IconButton aria-label="settings">
-              <MoreVertIcon />
-            </IconButton>
-          }
-          title="Shrimp and Chorizo Paella"
-          subheader="September 14, 2016"
-        />
-        <CardMedia
-          component="img"
-          height="194"
-          image="/static/images/cards/paella.jpg"
-          alt="Paella dish"
-        />
-        <CardContent>
-          <Typography variant="body2" color="text.secondary">
-            This ...
-          </Typography>
-        </CardContent>
-        <CardActions disableSpacing>
-          <IconButton aria-label="add to favorites">
-            <FavoriteIcon />
-          </IconButton>
-          <IconButton aria-label="share">
-            <ShareIcon />
-          </IconButton>
-          <ExpandMore
-            expand={expanded}
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="show more"
-          >
-            <ExpandMoreIcon />
-          </ExpandMore>
-        </CardActions>
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <CardContent>
-            <Typography paragraph>Title:</Typography>
-            
-            <Typography paragraph>
-              ...
-            </Typography>
-           
-           
-          </CardContent>
-        </Collapse>
-      </Card>
-       )
-            })}
+    <div
+      className="d-flex justify-content-center flex-wrap m-2 mt-5"
+      style={{ gap: "1.5rem" }}
+    >
+      {posts?.map((item) => {
+        const { date } = item;
+        const dateFormat = date.split(" ");
+
+        return (
+          <Card sx={{ maxWidth: 345 }}>
+            <CardHeader
+              avatar={
+                <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                  {item?.author[0]}
+                </Avatar>
+              }
+              action={
+                <IconButton aria-label="settings">
+                  <MoreVertIcon />
+                </IconButton>
+              }
+              title={item?.author}
+              subheader={dateFormat.slice(0,5).join(" ")}
+            />
+            <CardMedia
+              component="img"
+              height="194"
+              image="/static/images/cards/paella.jpg"
+              alt="Paella dish"
+            />
+            <CardContent>
+              <Typography variant="body2" color="text.secondary">
+                This ...
+              </Typography>
+            </CardContent>
+            <CardActions disableSpacing>
+              <IconButton aria-label="add to favorites">
+                <FavoriteIcon />
+              </IconButton>
+              <IconButton aria-label="share">
+                <ShareIcon />
+              </IconButton>
+              <ExpandMore
+                expand={expanded}
+                onClick={handleExpandClick}
+                aria-expanded={expanded}
+                aria-label="show more"
+              >
+                <ExpandMoreIcon />
+              </ExpandMore>
+            </CardActions>
+            <Collapse in={expanded} timeout="auto" unmountOnExit>
+              <CardContent>
+                <Typography paragraph>Title:</Typography>
+
+                <Typography paragraph>...</Typography>
+              </CardContent>
+            </Collapse>
+          </Card>
+        );
+      })}
     </div>
   );
 };
