@@ -5,12 +5,14 @@ import GoogleIcon from "../../assers/GoogleIcon";
 import { useSelector, useDispatch } from "react-redux";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
-import { auth } from "../../auth/firebase";
+import app, { auth } from "../../auth/firebase";
 import { loginInfos } from "../../redux/features/loginInfoSlice";
 import { loginSuccess } from "../../redux/features/loginInfoSlice";
 import { useNavigate } from "react-router-dom";
 import { GoogleAuthProvider } from "firebase/auth";
 import ForgotPassword from "./ForgotPassword";
+import { getDatabase } from "firebase/database";
+import { ref, set} from "firebase/database";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -83,6 +85,16 @@ const Login = () => {
         uid,
         photoURL,
       } = result.user;
+      try {
+        const database = getDatabase(app);
+        const userRef = ref(database,`/users/${uid}`)
+        set (userRef, {
+          username:displayName,
+          likedPosts:0
+        })
+      } catch (error) {
+        console.log(error.message);
+      }
       dispatch(
         loginSuccess({
           ...loginInforms,

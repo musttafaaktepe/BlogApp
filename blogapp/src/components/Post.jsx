@@ -23,6 +23,10 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import AutoStoriesIcon from "@mui/icons-material/AutoStories";
+import { useNavigate } from "react-router-dom";
+import PostDetails from "../pages/PostDetails";
 
 const Post = () => {
   const [expanded, setExpanded] = React.useState(false);
@@ -47,6 +51,7 @@ const Post = () => {
   const { posts } = useSelector((state) => state.postsSlice);
   console.log(posts);
   console.log(postsArr);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const database = getDatabase(app);
@@ -61,6 +66,18 @@ const Post = () => {
       dispatch(getPosts({ posts: postsArray }));
     });
   }, []);
+
+  const { loginInformation } = useSelector((state) => state.loginInfos);
+  console.log(loginInformation);
+
+  const postDetails = () => {
+    if (loginInformation) {
+      navigate("/postDetails");
+    } else {
+      alert("for more logın page");
+    }
+  };
+
   return (
     <div
       className="d-flex justify-content-center flex-wrap m-2 mt-5"
@@ -84,18 +101,17 @@ const Post = () => {
                 </IconButton>
               }
               title={item?.author}
-              subheader={dateFormat.slice(0,5).join(" ")}
+              subheader={dateFormat.slice(0, 5).join(" ")}
             />
             <CardMedia
               component="img"
               height="194"
               image={item.imageURL}
               alt={item.postTitle}
-             
             />
             <CardContent>
-              <Typography variant="body2" color="text.secondary">
-                This ...
+              <Typography variant="h5" color="text.primary">
+                {item?.postTitle}
               </Typography>
             </CardContent>
             <CardActions disableSpacing>
@@ -105,6 +121,10 @@ const Post = () => {
               <IconButton aria-label="share">
                 <ShareIcon />
               </IconButton>
+              <IconButton aria-label="share">
+                <AutoStoriesIcon onClick={postDetails} />
+              </IconButton>
+
               <ExpandMore
                 expand={expanded}
                 onClick={handleExpandClick}
@@ -116,9 +136,11 @@ const Post = () => {
             </CardActions>
             <Collapse in={expanded} timeout="auto" unmountOnExit>
               <CardContent>
-                <Typography paragraph>Title:</Typography>
+                <Typography variant="h5" paragraph>
+                  {item?.postTitle}
+                </Typography>
 
-                <Typography paragraph>...</Typography>
+                <Typography paragraph>{item?.postContent}</Typography>
               </CardContent>
             </Collapse>
           </Card>

@@ -69,6 +69,7 @@ const NewPost = () => {
         postTitle: "",
         postContent: "",
         imageURL: "",
+        author:displayName
       });
       alert("posted!");
     } else {
