@@ -1,14 +1,19 @@
 /* eslint-disable jsx-a11y/alt-text */
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 import app from "../auth/firebase";
 import { getDatabase, ref, set, push } from "firebase/database";
 
 const NewPost = () => {
+  const {
+    userInfo: { displayName },
+  } = useSelector((state) => state.loginInfos);
   const [postInfos, setPostInfos] = useState({
     postTitle: "",
     postContent: "",
     imageURL: "",
+    author: displayName,
   });
 
   const [titleError, setTitleError] = useState(true);
