@@ -108,6 +108,10 @@ export default function NavbarLogin() {
     }
   }
 
+  const handleMyPosts =() =>{
+    navigate("/userPosts")
+  }
+
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
@@ -130,6 +134,7 @@ export default function NavbarLogin() {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMyaccount}>My account</MenuItem>
+      <MenuItem onClick={handleMyPosts} > my post </MenuItem>
       <MenuItem onClick={handleLogout} >Logout</MenuItem>
     </Menu>
   );

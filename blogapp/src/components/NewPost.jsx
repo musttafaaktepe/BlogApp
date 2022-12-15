@@ -3,11 +3,11 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 import app from "../auth/firebase";
-import { getDatabase, ref, set, push } from "firebase/database";
+import { getDatabase, ref, set, push, onValue } from "firebase/database";
 
 const NewPost = () => {
   const {
-    userInfo: { displayName },
+    userInfo: { displayName , uid},
   } = useSelector((state) => state.loginInfos);
 
   const [date, setDate] = useState("");
@@ -60,9 +60,19 @@ const NewPost = () => {
       console.log("posted", postInfos);
       const database = getDatabase(app);
       const refPost = push(ref(database, "/posts"));
+      const userRef = ref(database, `users/${uid}`)
+      try {
+        onValue (refPost, (snapshot)=> {
+          const data = snapshot;
+          console.log(data)
+        })
+      } catch (error) {
+        console.log(error.message)
+      }
       set(refPost, {
         ...postInfos,
-        date:date,  
+        date:date,
+        uid, 
         imageURL: imgSrcError ? "https://jobsalert.pk/wp-content/themes/jobs/images/default-blog-thumb.png" : postInfos.imageURL
       });
       setPostInfos({

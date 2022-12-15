@@ -8,6 +8,8 @@ import UserInfos from "../pages/UserInformation/UserAccountInfos";
 import { useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import PrivateRooter from "./PrivateRooter";
+import userPost from "../components/UserPost";
+import UserPost from "../components/UserPost";
 import PostDetails from "../pages/PostDetails";
 
 const AppRouter = () => {
@@ -23,6 +25,13 @@ const AppRouter = () => {
       <Route path="/postDetails" element={<PrivateRooter/>}>
         <Route path="" element={<PostDetails/>}/>
       </Route>
+
+      <Route path="/userposts" element={<PrivateRooter/>}>
+        <Route path="" element={<UserPost/>}/>
+      </Route>
+
+
+
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
     </>
