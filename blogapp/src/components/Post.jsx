@@ -63,7 +63,7 @@ const Post = () => {
       for (let id in data) {
         postsArray.push({ id, ...data[id] });
       }
-      dispatch(getPosts({ posts: postsArray }));
+      dispatch(getPosts({ posts: postsArray.reverse() }));
     });
   }, []);
 
