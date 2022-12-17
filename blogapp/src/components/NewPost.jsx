@@ -70,9 +70,11 @@ const NewPost = () => {
         console.log(error.message)
       }
       set(refPost, {
+        numberOfComments:0,
+        numberOfLike:0,
+        uid,
         ...postInfos,
         date:date,
-        uid, 
         imageURL: imgSrcError ? "https://jobsalert.pk/wp-content/themes/jobs/images/default-blog-thumb.png" : postInfos.imageURL
       });
       setPostInfos({

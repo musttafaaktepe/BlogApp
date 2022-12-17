@@ -1,10 +1,10 @@
-import { getDatabase } from "firebase/database";
+import { getDatabase, update } from "firebase/database";
 import { onValue } from "firebase/database";
 import { ref } from "firebase/database";
 import app from "../auth/firebase";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { getPosts } from "../redux/features/postSlice";
+import { getPosts, getUser, updateFavorite} from "../redux/features/postSlice";
 import { useEffect, useState } from "react";
 
 import * as React from "react";
@@ -30,6 +30,17 @@ import PostDetails from "../pages/PostDetails";
 
 const Post = () => {
   const [expanded, setExpanded] = React.useState(false);
+  const { posts, user} = useSelector((state) => state.postsSlice);
+  const { loginInformation, userInfo } = useSelector(
+    (state) => state.loginInfos
+  );
+  const [userLikedPosts, setUserLikedPosts] = useState((user?.likedPosts))
+  const [ likedArr, setLikedArr ] = useState([])
+  
+  console.log(user);
+
+  console.log(posts);
+  console.log(user?.likedPosts)
 
   const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -48,7 +59,7 @@ const Post = () => {
 
   const dispatch = useDispatch();
   const [postsArr, setPostsArr] = useState([]);
-  const { posts } = useSelector((state) => state.postsSlice);
+  
   console.log(posts);
   console.log(postsArr);
   const navigate = useNavigate();
@@ -56,6 +67,7 @@ const Post = () => {
   useEffect(() => {
     const database = getDatabase(app);
     const postsRef = ref(database, "/posts");
+    const userRef = ref(database, `/users/${userInfo?.uid}`)
     onValue(postsRef, (snapshot) => {
       const data = snapshot.val();
       const postsArray = [];
@@ -65,9 +77,15 @@ const Post = () => {
       }
       dispatch(getPosts({ posts: postsArray.reverse() }));
     });
+    onValue(userRef, (snapshot)=>{
+      const data = snapshot.val()
+     dispatch (getUser({user:data}))
+
+      console.log(data)
+    })
   }, []);
 
-  const { loginInformation } = useSelector((state) => state.loginInfos);
+  
   console.log(loginInformation);
 
   const postDetails = () => {
@@ -86,6 +104,48 @@ const Post = () => {
       {posts?.map((item) => {
         const { date } = item;
         const dateFormat = date.split(" ");
+
+        const addFavorite = () => {
+          console.log(item.id);
+          // dispatch (updateFavorite({...user?.likedPosts, item?.id}))
+          
+          try {
+            const database = getDatabase(app);
+            const userLikedRef = ref(
+              database,
+              `/users/${userInfo?.uid}/likedPosts`
+            );
+            // set(userLikedRef)
+            update(userLikedRef, {0:item.id} );
+
+
+          } catch (error) {
+            console.log(error.message);
+          }
+        };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         return (
           <Card sx={{ maxWidth: 345 }}>
@@ -116,13 +176,17 @@ const Post = () => {
             </CardContent>
             <CardActions disableSpacing>
               <IconButton aria-label="add to favorites">
-                <FavoriteIcon />
+                <FavoriteIcon onClick={addFavorite} />
+                {item?.numberOfLike}
               </IconButton>
-              <IconButton aria-label="share">
+              {/* <IconButton aria-label="share">
                 <ShareIcon />
-              </IconButton>
+                
+              </IconButton> */}
               <IconButton aria-label="share">
                 <AutoStoriesIcon onClick={postDetails} />
+
+                {item?.numberOfComments}
               </IconButton>
 
               <ExpandMore
