@@ -11,8 +11,9 @@ import { loginSuccess } from "../../redux/features/loginInfoSlice";
 import { useNavigate } from "react-router-dom";
 import { GoogleAuthProvider } from "firebase/auth";
 import ForgotPassword from "./ForgotPassword";
-import { getDatabase } from "firebase/database";
-import { ref, set} from "firebase/database";
+import { getDatabase, onValue } from "firebase/database";
+import { ref, set } from "firebase/database";
+import { getUser } from "../../redux/features/postSlice";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState(false);
 
   const loginInforms = useSelector((state) => state.loginInfos);
+
   const { loginInformation, email, password, userInfo } = loginInforms;
 
   const googleProvider = new GoogleAuthProvider();
@@ -65,6 +67,19 @@ const Login = () => {
             email: emailAddress,
           })
         );
+
+        try {
+          const database = getDatabase(app);
+          const userRef = ref(database, `/users/${userInfo?.uid}`);
+          onValue(userRef, (snapshot) => {
+            const data = snapshot.val();
+            console.log(data);
+            dispatch(getUser({ user: data }));
+          });
+        } catch (error) {
+          console.log(error.message);
+        }
+
         navigate("/");
         alert("Successfull login");
         console.log(loginInforms);
@@ -87,11 +102,11 @@ const Login = () => {
       } = result.user;
       try {
         const database = getDatabase(app);
-        const userRef = ref(database,`/users/${uid}`)
-        set (userRef, {
-          username:displayName,
-          likedPosts:0
-        })
+        const userRef = ref(database, `/users/${uid}`);
+        set(userRef, {
+          username: displayName,
+          likedPosts: 0,
+        });
       } catch (error) {
         console.log(error.message);
       }

@@ -68,7 +68,8 @@ const Register = () => {
           console.log(database);
           set(userRef, {
             username:user.displayName,
-            likedPosts:0
+            likedPosts:0,
+            messages:""
 
           } )
           
