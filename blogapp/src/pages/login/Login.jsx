@@ -70,7 +70,7 @@ const Login = () => {
 
         try {
           const database = getDatabase(app);
-          const userRef = ref(database, `/users/${userInfo?.uid}`);
+          const userRef = ref(database, `/users/${uid}`);
           onValue(userRef, (snapshot) => {
             const data = snapshot.val();
             console.log(data);

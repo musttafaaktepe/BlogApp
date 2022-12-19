@@ -58,21 +58,23 @@ const Register = () => {
       name.toString().length >= 3
     ) {
       try {
-        const {user} = await createUserWithEmailAndPassword(auth, email, password);
+        const { user } = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
         await updateProfile(auth.currentUser, {
           displayName: name,
         });
         try {
           const database = getDatabase(app);
-          const userRef = ref(database, `/users/${user.uid}`)
+          const userRef = ref(database, `/users/${user.uid}`);
           console.log(database);
           set(userRef, {
-            username:user.displayName,
-            likedPosts:0,
-            messages:""
-
-          } )
-          
+            username: user.displayName,
+            likedPosts: "",
+            messages: "",
+          });
         } catch (error) {
           console.log(error.message);
         }

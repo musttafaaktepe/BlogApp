@@ -22,10 +22,12 @@ const postsSlice = createSlice({
         },
         deleteFavorite:(state, action) =>{
             state.user.likedPosts= action.payload.likedPosts
-        }
+        },
+        logoutCase: () => initialStates
+    
        
     }
 })
 
-export const { getPosts, getUser, updateFavorite} = postsSlice.actions;
+export const { getPosts, getUser, updateFavorite,  logoutCase} = postsSlice.actions;
 export default postsSlice.reducer;

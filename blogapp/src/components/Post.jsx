@@ -1,6 +1,6 @@
 import { getDatabase, update } from "firebase/database";
 import { onValue } from "firebase/database";
-import { ref, set } from "firebase/database";
+import { ref, set, remove } from "firebase/database";
 import app from "../auth/firebase";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -31,6 +31,7 @@ import PostDetails from "../pages/PostDetails";
 const Post = () => {
   const [expanded, setExpanded] = React.useState(false);
   const { posts, user } = useSelector((state) => state.postsSlice);
+  console.log(user?.likedPosts);
   const { loginInformation, userInfo } = useSelector(
     (state) => state.loginInfos
   );
@@ -57,6 +58,13 @@ const Post = () => {
   console.log(postsArr);
   const navigate = useNavigate();
 
+  const firebaseUpdate = () => {
+    const database = getDatabase(app);
+    const likedRef = ref(database, `/users/${userInfo?.uid}/likedPosts`);
+
+    set(likedRef, user?.likedPosts);
+  };
+
   useEffect(() => {
     const database = getDatabase(app);
     const postsRef = ref(database, "/posts");
@@ -70,7 +78,8 @@ const Post = () => {
       }
       dispatch(getPosts({ posts: postsArray.reverse() }));
     });
-  }, []);
+    firebaseUpdate();
+  }, [user]);
 
   const postDetails = () => {
     if (loginInformation) {
@@ -90,24 +99,27 @@ const Post = () => {
         const dateFormat = date.split(" ");
 
         const addFavorite = () => {
-          let sameId = 0;
-          console.log(item.id);
-          if (user?.likedPosts.length === 0) {
-            dispatch(
-              updateFavorite({ likedPosts: [...user?.likedPosts, item?.id] })
-            );
+          console.log(item?.id);
+          let sameId = false;
+          let likedArr = [];
+          if (user?.likedPosts?.keys().length === 0) {
+            likedArr.push(item?.id);
           } else {
             for (let i in user?.likedPosts) {
-              if (item.id === user.likedPosts[i]) {
-                sameId += 1;
+              if (item.id === user?.likedPosts[i]) {
+                sameId = true;
+              } else {
+                likedArr.push(user.likedPosts[i]);
               }
             }
-            if (sameId === 0) {
-              dispatch(
-                updateFavorite({ likedPosts: [...user?.likedPosts, item?.id] })
-              );
+            if (sameId === false) {
+              likedArr.push(item.id);
             }
+            console.log(likedArr);
+            console.log(sameId);
           }
+
+          dispatch(updateFavorite({ likedPosts: [...likedArr] }));
         };
 
         return (
