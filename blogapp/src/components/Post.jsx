@@ -61,8 +61,11 @@ const Post = () => {
   const firebaseUpdate = () => {
     const database = getDatabase(app);
     const likedRef = ref(database, `/users/${userInfo?.uid}/likedPosts`);
-
-    set(likedRef, user?.likedPosts);
+    try {
+      set(likedRef, user?.likedPosts);
+    } catch (error) {
+      console.log(error.message)
+    }    
   };
 
   useEffect(() => {
@@ -109,7 +112,7 @@ const Post = () => {
               if (item.id === user?.likedPosts[i]) {
                 sameId = true;
               } else {
-                likedArr.push(user.likedPosts[i]);
+                likedArr.push(user?.likedPosts[i]);
               }
             }
             if (sameId === false) {
@@ -151,7 +154,7 @@ const Post = () => {
             </CardContent>
             <CardActions disableSpacing>
               <IconButton aria-label="add to favorites">
-                <FavoriteIcon onClick={addFavorite} />
+                <FavoriteIcon onClick={()=>{loginInformation && addFavorite()}} />
                 {item?.numberOfLike}
               </IconButton>
               {/* <IconButton aria-label="share">
