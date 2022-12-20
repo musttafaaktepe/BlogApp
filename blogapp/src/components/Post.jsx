@@ -29,12 +29,12 @@ import { useNavigate } from "react-router-dom";
 import PostDetails from "../pages/PostDetails";
 
 const Post = () => {
+  const [itemValues, setItemValues] = useState({});
   const [expanded, setExpanded] = React.useState(false);
   const { posts, user } = useSelector((state) => state.postsSlice);
   console.log(user?.likedPosts);
-  const { loginInformation, userInfo } = useSelector(
-    (state) => state.loginInfos
-  );
+  const { loginInformation, userInfo } = useSelector((state) => state.loginInfos);
+
 
   const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -58,33 +58,46 @@ const Post = () => {
   console.log(postsArr);
   const navigate = useNavigate();
 
-  const firebaseUpdate = async() =>  {
+  const firebaseUpdate = async () => {
     const database = getDatabase(app);
     const likedRef = ref(database, `/users/${userInfo?.uid}/likedPosts`);
-    try {
-      await set(likedRef, user?.likedPosts);
-    } catch (error) {
-      console.log(error.message)
-    }  
     
     try {
-
-      for (let i in user?.likedPosts){
-        const postLikeRef = ref(database, `/posts/${user?.likedPosts[i]}/numberOfLike`)
-        posts.map((item)=>{
-          const {id, numberOfComments} = item
-        })
-      }
-
-
-
-
-
-      
+      await set(likedRef, user?.likedPosts);
     } catch (error) {
       console.log(error.message);
     }
 
+    if(Object.keys(itemValues).length !==0){
+      try {
+        for (let i in user?.likedPosts) {
+          const postLikeRef = ref(
+            database,
+            `/posts/${user?.likedPosts[i]}/numberOfLike`
+          );
+          posts.map((item) => {
+            const { id, numberOfComments } = item;
+          });
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+
+    }
+    
+
+    try {
+      const { id, numberOfLike } = itemValues;
+      const likedPostRef = ref(database, `posts/${id}`);
+
+      if (user?.likedPosts?.includes(id)) {
+        update(likedPostRef, { numberOfLike: numberOfLike + 1 });
+      } else {
+        update(likedPostRef, { numberOfLike: numberOfLike - 1 });
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   useEffect(() => {
@@ -100,8 +113,13 @@ const Post = () => {
       }
       dispatch(getPosts({ posts: postsArray.reverse() }));
     });
+    
+  }, []);
+
+  useEffect(() => {
     firebaseUpdate();
-  }, [user]);
+  }, [user])
+  
 
   const postDetails = () => {
     if (loginInformation) {
@@ -121,7 +139,7 @@ const Post = () => {
         const dateFormat = date.split(" ");
 
         const addFavorite = () => {
-          console.log(item?.id);
+          setItemValues(item);
           let sameId = false;
           let likedArr = [];
           if (user?.likedPosts?.keys().length === 0) {
