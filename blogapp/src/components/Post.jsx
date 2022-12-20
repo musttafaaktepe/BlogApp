@@ -58,14 +58,33 @@ const Post = () => {
   console.log(postsArr);
   const navigate = useNavigate();
 
-  const firebaseUpdate = () => {
+  const firebaseUpdate = async() =>  {
     const database = getDatabase(app);
     const likedRef = ref(database, `/users/${userInfo?.uid}/likedPosts`);
     try {
-      set(likedRef, user?.likedPosts);
+      await set(likedRef, user?.likedPosts);
     } catch (error) {
       console.log(error.message)
-    }    
+    }  
+    
+    try {
+
+      for (let i in user?.likedPosts){
+        const postLikeRef = ref(database, `/posts/${user?.likedPosts[i]}/numberOfLike`)
+        posts.map((item)=>{
+          const {id, numberOfComments} = item
+        })
+      }
+
+
+
+
+
+      
+    } catch (error) {
+      console.log(error.message);
+    }
+
   };
 
   useEffect(() => {
@@ -154,7 +173,15 @@ const Post = () => {
             </CardContent>
             <CardActions disableSpacing>
               <IconButton aria-label="add to favorites">
-                <FavoriteIcon onClick={()=>{loginInformation && addFavorite()}} />
+                <FavoriteIcon
+                  style={{
+                    margin: "0.5rem",
+                    color: user?.likedPosts?.includes(item?.id) && "blue",
+                  }}
+                  onClick={() => {
+                    loginInformation && addFavorite();
+                  }}
+                />
                 {item?.numberOfLike}
               </IconButton>
               {/* <IconButton aria-label="share">
@@ -162,7 +189,10 @@ const Post = () => {
                 
               </IconButton> */}
               <IconButton aria-label="share">
-                <AutoStoriesIcon onClick={postDetails} />
+                <AutoStoriesIcon
+                  style={{ margin: "0.5rem" }}
+                  onClick={postDetails}
+                />
 
                 {item?.numberOfComments}
               </IconButton>
