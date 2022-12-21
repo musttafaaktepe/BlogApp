@@ -142,7 +142,7 @@ const Post = () => {
           setItemValues(item);
           let sameId = false;
           let likedArr = [];
-          if (user?.likedPosts?.keys().length === 0) {
+          if (Object.keys(user?.likedPosts).length === 0) {
             likedArr.push(item?.id);
           } else {
             for (let i in user?.likedPosts) {

@@ -111,6 +111,21 @@ const Login = () => {
       } catch (error) {
         console.log(error.message);
       }
+
+      try {
+        const database = getDatabase(app);
+        const userRef = ref(database, `/users/${uid}`)
+
+        onValue(userRef, (snapshot)=>{
+          const data = snapshot.val()
+          console.log(data);
+        dispatch(getUser({user:data}))
+        })
+      } catch (error) {
+        console.log(error.message)
+      }
+
+
       dispatch(
         loginSuccess({
           ...loginInforms,
