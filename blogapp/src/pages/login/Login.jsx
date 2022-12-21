@@ -105,7 +105,8 @@ const Login = () => {
         const userRef = ref(database, `/users/${uid}`);
         set(userRef, {
           username: displayName,
-          likedPosts: 0,
+          likedPosts: "",
+          message: "",
         });
       } catch (error) {
         console.log(error.message);
