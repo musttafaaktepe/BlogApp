@@ -60,9 +60,10 @@ const Post = () => {
 
   const firebaseUpdate = async () => {
     const database = getDatabase(app);
-    const likedRef = ref(database, `/users/${userInfo?.uid}/likedPosts`);
+    
     
     try {
+      const likedRef = ref(database, `/users/${userInfo?.uid}/likedPosts`);
       await set(likedRef, user?.likedPosts);
     } catch (error) {
       console.log(error.message);
@@ -142,7 +143,7 @@ const Post = () => {
           setItemValues(item);
           let sameId = false;
           let likedArr = [];
-          if (Object.keys(user?.likedPosts).length === 0) {
+          if (String(user?.likedPosts).length === 0) {
             likedArr.push(item?.id);
           } else {
             for (let i in user?.likedPosts) {

@@ -92,59 +92,44 @@ const Login = () => {
   };
 
   const signInWithGoogle = () => {
-    signInWithPopup(auth, googleProvider).then((result) => {
-      const {
-        email: emailAddress,
-        displayName,
-        metadata: { creationTime, lastSignInTime },
-        uid,
-        photoURL,
-      } = result.user;
-      try {
-        const database = getDatabase(app);
-        const userRef = ref(database, `/users/${uid}`);
-        set(userRef, {
-          username: displayName,
-          likedPosts: "",
-          message: "",
-        });
-      } catch (error) {
-        console.log(error.message);
-      }
+    signInWithPopup(auth, googleProvider)
+      .then((result) => {
+        const { email: emailAddress, displayName, metadata: { creationTime, lastSignInTime }, uid, photoURL } = result.user
+        try{
+          const database = getDatabase(app);
+          const userRef = ref(database, `/users/${uid}`)
 
-      try {
-        const database = getDatabase(app);
-        const userRef = ref(database, `/users/${uid}`)
+          onValue(userRef, (snapshot) => {
+            const data = snapshot.val()
 
-        onValue(userRef, (snapshot)=>{
-          const data = snapshot.val()
-          console.log(data);
-        dispatch(getUser({user:data}))
-        })
-      } catch (error) {
-        console.log(error.message)
-      }
+            if(data === null) {
+              try{
+                const database = getDatabase(app);
+                const userRef = ref(database, `/users/${uid}`)
+                set(userRef, {
+                  username: displayName,
+                  likedPosts: "",
+                  messages: "",
+                })
+                
+              }catch(error){
+                console.log(error.message)
+              }
+            }
+            
+           dispatch(getUser({user: data}))
+      })
+        }catch(error){
+          console.log(error.message);
+        }
 
+        dispatch(loginSuccess({ ...loginInforms, userInfo: { displayName, metadata: { creationTime, lastSignInTime }, uid, photoURL }, email: emailAddress }))
 
-      dispatch(
-        loginSuccess({
-          ...loginInforms,
-          userInfo: {
-            displayName,
-            metadata: { creationTime, lastSignInTime },
-            uid,
-            photoURL,
-          },
-          email: emailAddress,
-        })
-      );
-      navigate("/");
-      alert("Successfully logged in with Google!");
-      console.log(result);
-    });
-  };
+        navigate("/")
+        alert("sign in with Google!")
+      })
 
-  console.log(loginInforms);
+  }
 
   return (
     <div>
