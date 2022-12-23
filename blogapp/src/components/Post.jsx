@@ -33,8 +33,9 @@ const Post = () => {
   const [expanded, setExpanded] = React.useState(false);
   const { posts, user } = useSelector((state) => state.postsSlice);
   console.log(user?.likedPosts);
-  const { loginInformation, userInfo } = useSelector((state) => state.loginInfos);
-
+  const { loginInformation, userInfo } = useSelector(
+    (state) => state.loginInfos
+  );
 
   const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -60,8 +61,7 @@ const Post = () => {
 
   const firebaseUpdate = async () => {
     const database = getDatabase(app);
-    
-    
+
     try {
       const likedRef = ref(database, `/users/${userInfo?.uid}/likedPosts`);
       await set(likedRef, user?.likedPosts);
@@ -69,35 +69,21 @@ const Post = () => {
       console.log(error.message);
     }
 
-    if(Object.keys(itemValues).length !==0){
+    if (Object.keys(itemValues).length !== 0) {
       try {
-        for (let i in user?.likedPosts) {
-          const postLikeRef = ref(
-            database,
-            `/posts/${user?.likedPosts[i]}/numberOfLike`
-          );
-          posts.map((item) => {
-            const { id, numberOfComments } = item;
-          });
+        const { id, numberOfLike } = itemValues;
+        const likedPostRef = ref(database, `posts/${id}`);
+
+        if (user?.likedPosts?.includes(id)) {
+          update(likedPostRef, { numberOfLike: numberOfLike + 1 });
+          setItemValues({});
+        } else {
+          update(likedPostRef, { numberOfLike: numberOfLike - 1 });
+          setItemValues({});
         }
       } catch (error) {
         console.log(error.message);
       }
-
-    }
-    
-
-    try {
-      const { id, numberOfLike } = itemValues;
-      const likedPostRef = ref(database, `posts/${id}`);
-
-      if (user?.likedPosts?.includes(id)) {
-        update(likedPostRef, { numberOfLike: numberOfLike + 1 });
-      } else {
-        update(likedPostRef, { numberOfLike: numberOfLike - 1 });
-      }
-    } catch (error) {
-      console.log(error.message);
     }
   };
 
@@ -114,13 +100,9 @@ const Post = () => {
       }
       dispatch(getPosts({ posts: postsArray.reverse() }));
     });
-    
-  }, []);
 
-  useEffect(() => {
     firebaseUpdate();
-  }, [user])
-  
+  }, [user]);
 
   const postDetails = () => {
     if (loginInformation) {

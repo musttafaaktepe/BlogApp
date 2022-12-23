@@ -13,7 +13,7 @@ import { GoogleAuthProvider } from "firebase/auth";
 import ForgotPassword from "./ForgotPassword";
 import { getDatabase, onValue } from "firebase/database";
 import { ref, set } from "firebase/database";
-import { getUser } from "../../redux/features/postSlice";
+import { getUser, updateFavorite } from "../../redux/features/postSlice";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -92,44 +92,66 @@ const Login = () => {
   };
 
   const signInWithGoogle = () => {
-    signInWithPopup(auth, googleProvider)
-      .then((result) => {
-        const { email: emailAddress, displayName, metadata: { creationTime, lastSignInTime }, uid, photoURL } = result.user
-        try{
-          const database = getDatabase(app);
-          const userRef = ref(database, `/users/${uid}`)
+    signInWithPopup(auth, googleProvider).then((result) => {
+      const {
+        email: emailAddress,
+        displayName,
+        metadata: { creationTime, lastSignInTime },
+        uid,
+        photoURL,
+      } = result.user;
+      try {
+        const database = getDatabase(app);
+        const userRef = ref(database, `/users/${uid}`);
 
-          onValue(userRef, (snapshot) => {
-            const data = snapshot.val()
+        onValue(userRef, (snapshot) => {
+          const data = snapshot.val();
 
-            if(data === null) {
-              try{
-                const database = getDatabase(app);
-                const userRef = ref(database, `/users/${uid}`)
-                set(userRef, {
-                  username: displayName,
-                  likedPosts: "",
-                  messages: "",
-                })
-                
-              }catch(error){
-                console.log(error.message)
-              }
+          if (data === null) {
+            try {
+              const database = getDatabase(app);
+              const userRef = ref(database, `/users/${uid}`);
+              set(userRef, {
+                username: displayName,
+                likedPosts: "",
+                messages: "",
+              });
+            } catch (error) {
+              console.log(error.message);
             }
-            
-           dispatch(getUser({user: data}))
-      })
-        }catch(error){
-          console.log(error.message);
-        }
+          }
+        });
 
-        dispatch(loginSuccess({ ...loginInforms, userInfo: { displayName, metadata: { creationTime, lastSignInTime }, uid, photoURL }, email: emailAddress }))
+        onValue(userRef, (snapshot) => {
+          const data = snapshot.val();
 
-        navigate("/")
-        alert("sign in with Google!")
-      })
+          try {
+            dispatch(getUser({ user: data }));
+          } catch (error) {
+            console.log(error.message);
+          }
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
 
-  }
+      dispatch(
+        loginSuccess({
+          ...loginInforms,
+          userInfo: {
+            displayName,
+            metadata: { creationTime, lastSignInTime },
+            uid,
+            photoURL,
+          },
+          email: emailAddress,
+        })
+      );
+
+      navigate("/");
+      alert("sign in with Google!");
+    });
+  };
 
   return (
     <div>

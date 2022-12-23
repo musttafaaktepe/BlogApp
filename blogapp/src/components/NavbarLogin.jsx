@@ -15,13 +15,13 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../auth/firebase";
 import { useDispatch } from "react-redux";
-import RateReviewIcon from '@mui/icons-material/RateReview';
+import RateReviewIcon from "@mui/icons-material/RateReview";
 import { logout } from "../redux/features/loginInfoSlice";
-
+import { logoutCase } from "../redux/features/postSlice";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -38,8 +38,6 @@ const Search = styled("div")(({ theme }) => ({
     width: "auto",
   },
 }));
-
-
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -66,9 +64,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function NavbarLogin() {
-
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -89,28 +86,25 @@ export default function NavbarLogin() {
     handleMobileMenuClose();
   };
 
-
-
   const handleMyaccount = () => {
-    navigate("/userinfos")
+    navigate("/userinfos");
   };
 
   const handleLogout = async () => {
     try {
-      await signOut (auth);
+      await signOut(auth);
       dispatch(logout());
-      navigate("/")
-      alert("logout")
-      
+      dispatch(logoutCase());
+      navigate("/");
+      alert("logout");
     } catch (error) {
       console.log(error.message);
-      
     }
-  }
+  };
 
-  const handleMyPosts =() =>{
-    navigate("/userPosts")
-  }
+  const handleMyPosts = () => {
+    navigate("/userPosts");
+  };
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
@@ -134,8 +128,8 @@ export default function NavbarLogin() {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMyaccount}>My account</MenuItem>
-      <MenuItem onClick={handleMyPosts} > my post </MenuItem>
-      <MenuItem onClick={handleLogout} >Logout</MenuItem>
+      <MenuItem onClick={handleMyPosts}> my post </MenuItem>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
   );
 
@@ -204,14 +198,13 @@ export default function NavbarLogin() {
           >
             <MenuIcon />
           </IconButton>
-          <RateReviewIcon/>
+          <RateReviewIcon />
           <Typography
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: "none", sm: "block"}, cursor:"pointer"}}
-            
-            onClick={()=>navigate("/")}
+            sx={{ display: { xs: "none", sm: "block" }, cursor: "pointer" }}
+            onClick={() => navigate("/")}
           >
             BLOG
           </Typography>
