@@ -1,6 +1,5 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
@@ -15,6 +14,9 @@ import CommentIcon from "@mui/icons-material/Comment";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Box } from "@mui/system";
 import { Navigate } from "react-router-dom";
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+import CardGroup from 'react-bootstrap/CardGroup';
 
 const UserPost = () => {
   const { posts } = useSelector((state) => state.postsSlice);
@@ -39,11 +41,21 @@ const UserPost = () => {
       {posts.map((item) => {
 
         return <div>{item.uid === uid &&
-          <p>{`${item.id}, ${item.author}`}</p>
+          <>
+          <h3>{`${item.author}'s Posts: `}</h3>
 
-          
+          <Card style={{ width: '18rem' }}>
+          <Card.Img variant="top" src={item.imageURL} />
+          <Card.Body>
+            <Card.Title>{item.postTitle}</Card.Title>
+            <Card.Text>
+             {item.postContent}
+            </Card.Text>
+            <Button variant="primary">Details</Button>
+          </Card.Body>
+        </Card>
 
-
+</>
           
 
 
