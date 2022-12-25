@@ -27,12 +27,24 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import { useNavigate } from "react-router-dom";
 import PostDetails from "../pages/PostDetails";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const Post = () => {
+
+  const {
+    userInfo: { uid },
+  } = useSelector((state) => state.loginInfos);
+
+
   const [itemValues, setItemValues] = useState({});
   const [expanded, setExpanded] = React.useState(false);
+
+  const [postIdState, setPostIdState] = useState([]);
+
+
   const { posts, user } = useSelector((state) => state.postsSlice);
   console.log(user?.likedPosts);
+  
   const { loginInformation, userInfo } = useSelector(
     (state) => state.loginInfos
   );
@@ -48,7 +60,10 @@ const Post = () => {
     }),
   }));
 
-  const handleExpandClick = () => {
+  const handleExpandClick = (id) => {
+    const postID = posts.filter((item)=>item.id=== id)
+    setPostIdState(postID)
+    console.log(postID)
     setExpanded(!expanded);
   };
 
@@ -155,7 +170,8 @@ const Post = () => {
               }
               action={
                 <IconButton aria-label="settings">
-                  <MoreVertIcon />
+                  {item.uid === uid &&
+                  <DeleteIcon  />}
                 </IconButton>
               }
               title={item?.author}
@@ -197,17 +213,20 @@ const Post = () => {
 
                 {item?.numberOfComments}
               </IconButton>
-
+              
               <ExpandMore
                 expand={expanded}
-                onClick={handleExpandClick}
+                onClick={()=>handleExpandClick(item?.id)}
                 aria-expanded={expanded}
                 aria-label="show more"
               >
                 <ExpandMoreIcon />
               </ExpandMore>
             </CardActions>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
+
+            {item.id===postIdState[0]?.id &&  
+            <Collapse in={item.id===postIdState[0]?.id && expanded} timeout="auto" unmountOnExit>
+              
               <CardContent>
                 <Typography variant="h5" paragraph>
                   {item?.postTitle}
@@ -215,7 +234,9 @@ const Post = () => {
 
                 <Typography paragraph>{item?.postContent}</Typography>
               </CardContent>
-            </Collapse>
+
+            </Collapse>}
+            
           </Card>
         );
       })}
