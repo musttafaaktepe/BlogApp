@@ -44,7 +44,9 @@ const UserPost = () => {
             <Card.Text>
              {item.postContent}
             </Card.Text>
-            <Button variant="primary"  onClick={postDetails} >Details</Button>
+            <Button variant="primary"  
+            // onClick={postDetails}
+             >Details</Button>
           </Card.Body>
         </Card>
 

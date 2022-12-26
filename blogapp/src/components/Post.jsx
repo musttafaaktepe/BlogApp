@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { getPosts, getUser, updateFavorite } from "../redux/features/postSlice";
 import { useEffect, useState } from "react";
-import Edit from "./Edit"
+import Edit from "./EditPost";
 
 import * as React from "react";
 import { styled } from "@mui/material/styles";
@@ -28,25 +28,23 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import { useNavigate } from "react-router-dom";
 import PostDetails from "../pages/PostDetails";
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import EditPost from "./EditPost";
 
 const Post = () => {
-
   const {
     userInfo: { uid },
   } = useSelector((state) => state.loginInfos);
-
 
   const [itemValues, setItemValues] = useState({});
   const [expanded, setExpanded] = React.useState(false);
 
   const [postIdState, setPostIdState] = useState([]);
 
-
   const { posts, user } = useSelector((state) => state.postsSlice);
   console.log(user?.likedPosts);
-  
+
   const { loginInformation, userInfo } = useSelector(
     (state) => state.loginInfos
   );
@@ -63,9 +61,9 @@ const Post = () => {
   }));
 
   const handleExpandClick = (id) => {
-    const postID = posts.filter((item)=>item.id=== id)
-    setPostIdState(postID)
-    console.log(postID)
+    const postID = posts.filter((item) => item.id === id);
+    setPostIdState(postID);
+    console.log(postID);
     setExpanded(!expanded);
   };
 
@@ -138,21 +136,14 @@ const Post = () => {
         const { date } = item;
         const dateFormat = date.split(" ");
 
-        const deletePost=()=>{
+        const deletePost = () => {
           const database = getDatabase();
-          const deletePostRef = ref(database, `/posts/${item?.id}`)
-          remove(deletePostRef)         
-          alert('delete post');
+          const deletePostRef = ref(database, `/posts/${item?.id}`);
+          remove(deletePostRef);
+          alert("delete post");
+        };
 
-        }
-
-
-        const postEdit =()=>{
-
-        }
-
-
-
+        const postEdit = () => {};
 
         const addFavorite = () => {
           setItemValues(item);
@@ -188,8 +179,7 @@ const Post = () => {
               }
               action={
                 <IconButton aria-label="settings">
-                  {item.uid === uid &&
-                  <DeleteIcon onClick={deletePost}  />}
+                  {item.uid === uid && <DeleteIcon onClick={deletePost} />}
                 </IconButton>
               }
               title={item?.author}
@@ -224,49 +214,58 @@ const Post = () => {
                 
               </IconButton> */}
 
-              
-
-
               <IconButton aria-label="share">
-                <AutoStoriesIcon
+                {/* <AutoStoriesIcon
                   style={{ margin: "0.5rem" }}
                   onClick={postDetails}
-                />
+                /> */}
 
-                {item?.numberOfComments}
+                {/* {item?.numberOfComments} */}
               </IconButton>
 
-              <IconButton aria-label="share"  data-bs-toggle="modal" data-bs-target="#editpost" >
-              {item.uid === uid &&
-                <EditIcon
-                  style={{ margin: "0.5rem" }}
-
-                  onClick={postEdit} />}
+              <IconButton
+                aria-label="share"
+                data-bs-toggle="modal"
+                data-bs-target="#editpost"
+              >
+                {item.uid === uid && (
+                  <EditIcon
+                    style={{ margin: "0.5rem" }}
+                    data-bs-toggle="modal"
+                    data-bs-target="#editpost"
+                    onMouseOver={() => setItemValues(item)}
+                    onClick={postEdit}
+                  />
+                )}
               </IconButton>
-              
+
               <ExpandMore
                 expand={expanded}
-                onClick={()=>handleExpandClick(item?.id)}
+                onClick={() => handleExpandClick(item?.id)}
                 aria-expanded={expanded}
                 aria-label="show more"
               >
                 <ExpandMoreIcon />
+
               </ExpandMore>
             </CardActions>
 
-            {item.id===postIdState[0]?.id &&  
-            <Collapse in={item.id===postIdState[0]?.id && expanded} timeout="auto" unmountOnExit>
-              
-              <CardContent>
-                <Typography variant="h5" paragraph>
-                  {item?.postTitle}
-                </Typography>
+            {item.id === postIdState[0]?.id && (
+              <Collapse
+                in={item.id === postIdState[0]?.id && expanded}
+                timeout="auto"
+                unmountOnExit
+              >
+                <CardContent>
+                  <Typography variant="h5" paragraph>
+                    {item?.postTitle}
+                  </Typography>
 
-                <Typography paragraph>{item?.postContent}</Typography>
-              </CardContent>
-
-            </Collapse>}
-            
+                  <Typography paragraph>{item?.postContent}</Typography>
+                </CardContent>
+              </Collapse>
+            )}
+            <EditPost item={itemValues} setItem={setItemValues} />
           </Card>
         );
       })}
