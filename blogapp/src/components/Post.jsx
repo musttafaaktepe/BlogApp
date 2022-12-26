@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { getPosts, getUser, updateFavorite } from "../redux/features/postSlice";
 import { useEffect, useState } from "react";
+import Edit from "./Edit"
 
 import * as React from "react";
 import { styled } from "@mui/material/styles";
@@ -28,6 +29,7 @@ import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import { useNavigate } from "react-router-dom";
 import PostDetails from "../pages/PostDetails";
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 const Post = () => {
 
@@ -136,6 +138,22 @@ const Post = () => {
         const { date } = item;
         const dateFormat = date.split(" ");
 
+        const deletePost=()=>{
+          const database = getDatabase();
+          const deletePostRef = ref(database, `/posts/${item?.id}`)
+          remove(deletePostRef)         
+          alert('delete post');
+
+        }
+
+
+        const postEdit =()=>{
+
+        }
+
+
+
+
         const addFavorite = () => {
           setItemValues(item);
           let sameId = false;
@@ -171,7 +189,7 @@ const Post = () => {
               action={
                 <IconButton aria-label="settings">
                   {item.uid === uid &&
-                  <DeleteIcon  />}
+                  <DeleteIcon onClick={deletePost}  />}
                 </IconButton>
               }
               title={item?.author}
@@ -205,6 +223,10 @@ const Post = () => {
                 <ShareIcon />
                 
               </IconButton> */}
+
+              
+
+
               <IconButton aria-label="share">
                 <AutoStoriesIcon
                   style={{ margin: "0.5rem" }}
@@ -212,6 +234,14 @@ const Post = () => {
                 />
 
                 {item?.numberOfComments}
+              </IconButton>
+
+              <IconButton aria-label="share"  data-bs-toggle="modal" data-bs-target="#editpost" >
+              {item.uid === uid &&
+                <EditIcon
+                  style={{ margin: "0.5rem" }}
+
+                  onClick={postEdit} />}
               </IconButton>
               
               <ExpandMore
